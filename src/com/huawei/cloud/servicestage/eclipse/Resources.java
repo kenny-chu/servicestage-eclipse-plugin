@@ -229,6 +229,9 @@ public interface Resources {
 
     static final String DIALOG_STATUS_URLMESSAGE = Activator
             .getResourceString("dialog.status.urlMessage");
+    
+    static final String DIALOG_INVALID_SERVICE_INSTANCE_ID_MESSAGE = Activator
+            .getResourceString("dialog.invalidServiceInstanceId.message");
 
     // Jobs
     static final String JOB_DEPLOY_NAME = Activator

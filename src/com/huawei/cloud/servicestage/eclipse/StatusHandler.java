@@ -15,8 +15,13 @@
  */
 package com.huawei.cloud.servicestage.eclipse;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 public class StatusHandler extends ServiceStageHandler implements Resources {
@@ -29,6 +34,29 @@ public class StatusHandler extends ServiceStageHandler implements Resources {
         }
 
         Shell shell = window.getShell();
+        
+        // Check settings file exists
+        File settingsFile = Util.getSettingsFile(project);
+        if (settingsFile == null || !settingsFile.exists()) {
+            MessageDialog.openError(shell, DIALOG_NO_SETTINGS_FILE_TITLE,
+                    DIALOG_NO_SETTINGS_FILE_MESSAGE);
+            return -1;
+        }
+        
+        // Sanity check service instance ID
+        try {
+            IDialogSettings ds = Util.loadDialogSettings(project);
+            String instanceId = ds.get(ConfigConstants.SERVICE_INSTANCE_ID);
+            if (instanceId == null || instanceId.trim().isEmpty()) {
+                MessageDialog.openError(shell, DIALOG_STATUS_ERROR,
+                        DIALOG_INVALID_SERVICE_INSTANCE_ID_MESSAGE);
+                return -1;
+            }
+        } catch (IOException e){
+            Util.showExceptionDialog(DIALOG_STATUS_ERROR, shell, e);
+            return -1;
+        }
+        
 
         AppStatus status = null;
         try {
